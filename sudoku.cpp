@@ -2,19 +2,19 @@
 using namespace std;
 
 // set
-Sudoku::Sudoku(){
+Sudoku::Sudoku() {
     for(int i = 0; i < sudokuSize; i++)
         map[i] = 0;
 }
 
-void Sudoku::setMap(const int set_map[]){
+void Sudoku::setMap(const int set_map[]) {
     for(int i = 0; i < sudokuSize; i++)
         map[i] = set_map[i];
 }
 
 // show map
-void Sudoku::showMap(){
-    for(int i = 0; i < sudokuSize; i++){
+void Sudoku::showMap() {
+    for(int i = 0; i < sudokuSize; i++) {
         if(i % 9 == 8)
             cout << map[i] << endl;
         else
@@ -25,8 +25,8 @@ void Sudoku::showMap(){
 // generate
 
 // transform
-void Sudoku::swapNum(int x, int y){
-    for(int i = 0; i < sudokuSize; i++){
+void Sudoku::swapNum(int x, int y) {
+    for(int i = 0; i < sudokuSize; i++) {
         if(map[i] == x)
             map[i] = y;
         else if(map[i] == y)
@@ -34,11 +34,12 @@ void Sudoku::swapNum(int x, int y){
     }
 }
 
-void Sudoku::swapRow(int x, int y){
+void Sudoku::swapRow(int x, int y) {
     int temp[sudokuSize/3], init_xpos, init_ypos;
 
     // prevent large number
-    x %= 3; y %= 3;
+    x %= 3;
+    y %= 3;
 
     // find position in map
     init_xpos = x*sudokuSize/3;
@@ -57,36 +58,37 @@ void Sudoku::swapRow(int x, int y){
         map[i + init_ypos] = temp[i];
 }
 
-void Sudoku::swapCol(int x, int y){
+void Sudoku::swapCol(int x, int y) {
     int temp[sudokuSize/3], init_xpos, init_ypos;
 
     // prevent large number
-    x %= 3; y %= 3;
+    x %= 3;
+    y %= 3;
 
     // find position in map
     init_xpos = x*3;
     init_ypos = y*3;
 
     // store column x in temp
-    for(int i = 0; i < 9; i++){
+    for(int i = 0; i < 9; i++) {
         for(int j = 0; j < 3; j++)
             temp[j + i*3] = map[init_xpos + j + i*9];
     }
 
     // store y in x
-    for(int i = 0; i < 9; i++){
+    for(int i = 0; i < 9; i++) {
         for(int j = 0; j < 3; j++)
             map[init_xpos + j + i*9] = map[init_ypos + j + i*9];
     }
 
     // store temp in y
-    for(int i = 0; i < 9; i++){
+    for(int i = 0; i < 9; i++) {
         for(int j = 0; j < 3; j++)
             map[init_ypos + j + i*9] = temp[j + i*3];
     }
 }
 
-void Sudoku::rotate(int x){
+void Sudoku::rotate(int x) {
     int temp[9][9], map2d[9][9];
 
     // prevent large number
@@ -98,33 +100,33 @@ void Sudoku::rotate(int x){
             map2d[i][j] = map[i*9 + j];
 
     // rotate
-    switch(x){
-        case 0: // rotate 0 degree(do nothing) 
-            for(int i = 0; i < 9; i++)
-                for(int j = 0; j < 9; j++)
-                    temp[i][j] = map2d[i][j];
-            break;
+    switch(x) {
+    case 0: // rotate 0 degree(do nothing)
+        for(int i = 0; i < 9; i++)
+            for(int j = 0; j < 9; j++)
+                temp[i][j] = map2d[i][j];
+        break;
 
-        case 1: // rotate 90 degree
-            for(int i = 0; i < 9; i++)
-                for(int j = 0; j < 9; j++)
-                    temp[i][j] = map2d[8-j][i];
-            break;
+    case 1: // rotate 90 degree
+        for(int i = 0; i < 9; i++)
+            for(int j = 0; j < 9; j++)
+                temp[i][j] = map2d[8-j][i];
+        break;
 
-        case 2: // rotate 180 degree
-            for(int i = 0; i < 9; i++)
-                for(int j = 0; j < 9; j++)
-                    temp[i][j] = map2d[8-i][8-j];
-            break;
+    case 2: // rotate 180 degree
+        for(int i = 0; i < 9; i++)
+            for(int j = 0; j < 9; j++)
+                temp[i][j] = map2d[8-i][8-j];
+        break;
 
-        case 3: // rotate 270 degree
-            for(int i = 0; i < 9; i++)
-                for(int j = 0; j < 9; j++)
-                    temp[i][j] = map2d[j][8-i];
-            break;
+    case 3: // rotate 270 degree
+        for(int i = 0; i < 9; i++)
+            for(int j = 0; j < 9; j++)
+                temp[i][j] = map2d[j][8-i];
+        break;
 
-        default:
-            break;
+    default:
+        break;
     }
 
     for(int i = 0; i < 9; i++)
@@ -132,7 +134,7 @@ void Sudoku::rotate(int x){
             map[i*9 + j] = temp[i][j];
 }
 
-void Sudoku::flip(int x){
+void Sudoku::flip(int x) {
     int temp[9][9], map2d[9][9];
 
     // prevent large number
@@ -143,31 +145,31 @@ void Sudoku::flip(int x){
         for(int j = 0; j < 9; j++)
             map2d[i][j] = map[i*9 + j];
 
-    switch(x){
-        case 0: // up-down flip
-            for(int i = 0; i < 9; i++)
-                for(int j = 0; j < 9; j++)
-                    temp[i][j] = map2d[8-i][j];
-            break;
+    switch(x) {
+    case 0: // up-down flip
+        for(int i = 0; i < 9; i++)
+            for(int j = 0; j < 9; j++)
+                temp[i][j] = map2d[8-i][j];
+        break;
 
-        case 1: // left-right flip
-            for(int i = 0; i < 9; i++)
-                for(int j = 0; j < 9; j++)
-                    temp[i][j] = map2d[i][8-j];
-            break;
+    case 1: // left-right flip
+        for(int i = 0; i < 9; i++)
+            for(int j = 0; j < 9; j++)
+                temp[i][j] = map2d[i][8-j];
+        break;
 
-        default:
-            cout << "ERROR: Wrong Command\n"
-                << "0: up-down flip; 1: left-right flip"
-                << endl;
-            exit(1);
-            break;
+    default:
+        cout << "ERROR: Wrong Command\n"
+             << "0: up-down flip; 1: left-right flip"
+             << endl;
+        exit(1);
+        break;
     }
 
-   for(int i = 0; i < 9; i++)
-       for(int j = 0; j < 9; j++)
-           map[i*9 + j] = temp[i][j];
+    for(int i = 0; i < 9; i++)
+        for(int j = 0; j < 9; j++)
+            map[i*9 + j] = temp[i][j];
 }
 
 // solve
-int Sudoku::solve(){}
+int Sudoku::solve() {}

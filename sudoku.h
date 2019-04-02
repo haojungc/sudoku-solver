@@ -8,11 +8,10 @@
  * You can modify this file if needed.             *
  ***************************************************/
 
-class Sudoku
-{
-public:
+class Sudoku {
+  public:
     static const int sudokuSize = 81;
-    
+
     // set
     Sudoku();
     void setMap(const int set_map[]);
@@ -34,7 +33,7 @@ public:
     int solve();
 
 
-private:
+  private:
     int map[sudokuSize];
 };
 

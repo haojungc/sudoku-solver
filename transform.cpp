@@ -1,8 +1,7 @@
 #include "sudoku.h"
 using namespace std;
 
-int main()
-{
+int main() {
     int su_in[Sudoku::sudokuSize], type, x, y;
     Sudoku su;
 
@@ -12,8 +11,8 @@ int main()
     su.setMap(su_in);
 
     // enter command
-    while(cin >> type, type){
-        switch(type){
+    while(cin >> type, type) {
+        switch(type) {
         case 1: // swap number
             cin >> x >> y;
             su.swapNum(x, y);
