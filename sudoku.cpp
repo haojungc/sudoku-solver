@@ -12,6 +12,13 @@ void Sudoku::setMap(const int set_map[]) {
         map[i] = set_map[i];
 }
 
+void Sudoku::setMap2d(const int set_map[]){
+
+    for(int i = 0; i < 9; i++)
+        for(int j = 0; j < 9; j++)
+            map2d[i][j] = set_map[i*9 + j];
+}
+
 // show map
 void Sudoku::showMap() {
     for(int i = 0; i < sudokuSize; i++) {
@@ -21,8 +28,6 @@ void Sudoku::showMap() {
             cout << map[i] << " ";
     }
 }
-
-// generate
 
 // transform
 void Sudoku::swapNum(int x, int y) {
@@ -89,7 +94,7 @@ void Sudoku::swapCol(int x, int y) {
 }
 
 void Sudoku::rotate(int x) {
-    int temp[9][9], map2d[9][9];
+    int temp[9][9];
 
     // prevent large number
     x %= 4;
@@ -135,7 +140,7 @@ void Sudoku::rotate(int x) {
 }
 
 void Sudoku::flip(int x) {
-    int temp[9][9], map2d[9][9];
+    int temp[9][9];
 
     // prevent large number
     x %= 2;
@@ -172,4 +177,81 @@ void Sudoku::flip(int x) {
 }
 
 // solve
-int Sudoku::solve() {}
+bool Sudoku::checkUnity(const int (&checkMap)[9]){
+    int count[10];
+
+    // initialize
+    for(int i = 0; i < 10; i++)
+        count[i] = 0;
+
+    // count
+    for(int i = 0; i < 9; i++)
+        count[checkMap[i]]++;
+
+    // check
+    for(int i = 1; i < 10; i++){
+        if(count[i] == 2)
+            return false;
+    }
+    return true;
+}
+
+bool Sudoku::isCorrect(){
+   bool check_result;
+
+   // check row
+   for(int i = 0; i < 9; i++){
+       for(int j = 0; j < 9; j++){
+           checkMap[j] = map2d[i][j];
+       }
+
+       check_result = checkUnity(checkMap);
+       if(check_result == false)
+           return false;
+   }
+
+   // check column
+   for(int i = 0; i < 9; i++){
+       for(int j = 0; j < 9; j++){
+           checkMap[j] = map2d[j][i];
+       }
+
+       check_result = checkUnity(checkMap);
+       if(check_result == false)
+           return false;
+   }
+
+   // check cell
+   int count;
+   for(int i = 0; i < 7; i += 3){
+       for(int j = 0; j < 7; j += 3){
+           count = 0;
+           for(int k = 0; k < 3; k++){
+               for(int w = 0; w < 3; w++)
+                   checkMap[count++] = map2d[i+k][j+w];
+           }
+
+           check_result = checkUnity(checkMap);
+           if(check_result == false)
+               return false;
+       }
+   }
+
+   return true;
+}
+
+int Sudoku::solve() {
+    int total_element = 0;
+    
+    if(isCorrect() == false)
+        return 0;
+
+    for(int i = 0; i < 9; i++){
+        for(int j = 0; j < 9; j++){
+            if(map2d[i][j])
+                total_element++;
+        }
+    }
+
+    cout << "test suceeded" << endl;
+}

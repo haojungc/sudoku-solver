@@ -15,6 +15,7 @@ class Sudoku {
     // set
     Sudoku();
     void setMap(const int set_map[]);
+    void setMap2d(const int set_map[]);
 
     // show map
     void showMap();
@@ -31,10 +32,14 @@ class Sudoku {
 
     // solve
     int solve();
+    bool isCorrect();
+    bool checkUnity(const int (&checkMap)[9]);
 
 
   private:
     int map[sudokuSize];
+    int map2d[9][9];
+    int checkMap[9];
 };
 
 #endif // SUDOKU_H
