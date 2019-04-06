@@ -36,6 +36,7 @@ class Sudoku {
     bool isCorrect();
     bool checkUnity(const int (&checkMap)[9]);
     void update(int i, int j);
+    bool killCand();
     bool delCand(int i, int j, int (&checkMap)[9]);
     bool delRowCand();
     bool delColCand();

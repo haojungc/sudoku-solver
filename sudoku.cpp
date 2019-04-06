@@ -285,21 +285,12 @@ int Sudoku::solve(){
 
     /*solve*/
     // delete candidates
-    do{
-        unchanged = true;
- 
-        // delete candidates in cells & update unchanged
-        if(delCellCand() == false)
-            unchanged = false;
-        
-        // delete candidates in columns & update unchanged
-        if(delColCand() == false)
-            unchanged = false;
-        
-        // delete candidates in rows & update unchanged
-        if(delRowCand() == false)
-            unchanged = false;
 
+    //test
+    //int count = 0;
+
+    do{
+        unchanged = killCand();
         // check solution
         for(int i = 0; i < 9; i++){
             for(int j = 0; j < 9; j++){
@@ -317,6 +308,14 @@ int Sudoku::solve(){
                 }
             }
         }
+
+        /*
+        // test
+        cout << "count = " << count++ << endl;
+        showMap2d();
+        cout << endl;
+        */
+
     } while(unchanged == false);
 
     // store map2d
@@ -337,8 +336,25 @@ int Sudoku::solve(){
     }
 }
 
-
 // delete candidates in each space
+bool Sudoku::killCand(){
+    bool unchanged = true;
+
+    // delete candidates in cells & update unchanged
+    if(delCellCand() == false)
+        unchanged = false;
+        
+    // delete candidates in columns & update unchanged
+    if(delColCand() == false)
+        unchanged = false;
+        
+    // delete candidates in rows & update unchanged
+    if(delRowCand() == false)
+        unchanged = false;
+
+    return unchanged;
+}
+
 bool Sudoku::delCand(int i, int j, int (&checkMap)[9]){
     bool unchanged = true;
 
@@ -445,12 +461,25 @@ bool Sudoku::recursive_solve(int i, int j){
 
     for(int k = 0; k < 9; k++){
         if(cand[i][j][k]){
+            // test
+            // cout << "map2d[" << i << "][" << j << "] = " << k+1 << endl;
+
             // put in candidates
-            map2d[i][j] = cand[i][j][k];
+            map2d[i][j] = k + 1;
+
+            // test
+            //showMap2d();
+            //cout << endl;
 
             if(isCorrect()){
+                // test
+                //cout << "CORRECT" << endl;
+
                 // done: store results in tempMap
                 if(checkDone()){
+                    // test
+                    //cout << "DONE" << endl;
+
                     for(int x = 0; x < 9; x++)
                         for(int y = 0; y < 9; y++)
                             tempMap[x][y] = map2d[x][y];
@@ -466,6 +495,10 @@ bool Sudoku::recursive_solve(int i, int j){
             }
         }
     }
+    map2d[i][j] = 0;
+
+    // test
+    // cout << "return false" << endl;
 
     return false;
 }
