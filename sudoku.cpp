@@ -12,10 +12,10 @@ void Sudoku::setMap(const int set_map[]) {
         map[i] = set_map[i];
 }
 
-void Sudoku::setMap2d(const int set_map[]){
+void Sudoku::setMap2d(const int set_map[]) {
 
     for(int i = 0; i < 9; i++)
-        for(int j = 0; j < 9; j++){
+        for(int j = 0; j < 9; j++) {
             map2d[i][j] = set_map[i*9 + j];
             total_cand[i][j] = 9;
             for(int k = 0; k < 9; k++)
@@ -33,9 +33,9 @@ void Sudoku::showMap() {
     }
 }
 
-void Sudoku::showMap2d(){
-    for(int i = 0; i < 9; i++){
-        for(int j = 0; j < 9; j++){
+void Sudoku::showMap2d() {
+    for(int i = 0; i < 9; i++) {
+        for(int j = 0; j < 9; j++) {
             cout << map2d[i][j];
             if(j < 8) cout << " ";
         }
@@ -191,7 +191,7 @@ void Sudoku::flip(int x) {
 }
 
 // solve
-bool Sudoku::checkUnity(const int (&checkMap)[9]){
+bool Sudoku::checkUnity(const int (&checkMap)[9]) {
     int count[10];
 
     // initialize
@@ -203,7 +203,7 @@ bool Sudoku::checkUnity(const int (&checkMap)[9]){
         count[checkMap[i]]++;
 
     // check
-    for(int i = 1; i < 10; i++){
+    for(int i = 1; i < 10; i++) {
         if(count[i] == 2)
             return false;
     }
@@ -211,52 +211,52 @@ bool Sudoku::checkUnity(const int (&checkMap)[9]){
     return true;
 }
 
-bool Sudoku::isCorrect(){
+bool Sudoku::isCorrect() {
     int checkMap[9];
     bool check_result;
 
-   // check row
-   for(int i = 0; i < 9; i++){
-       for(int j = 0; j < 9; j++){
-           checkMap[j] = map2d[i][j];
-       }
+    // check row
+    for(int i = 0; i < 9; i++) {
+        for(int j = 0; j < 9; j++) {
+            checkMap[j] = map2d[i][j];
+        }
 
-       check_result = checkUnity(checkMap);
-       if(check_result == false)
-           return false;
-   }
+        check_result = checkUnity(checkMap);
+        if(check_result == false)
+            return false;
+    }
 
-   // check column
-   for(int i = 0; i < 9; i++){
-       for(int j = 0; j < 9; j++){
-           checkMap[j] = map2d[j][i];
-       }
+    // check column
+    for(int i = 0; i < 9; i++) {
+        for(int j = 0; j < 9; j++) {
+            checkMap[j] = map2d[j][i];
+        }
 
-       check_result = checkUnity(checkMap);
-       if(check_result == false)
-           return false;
-   }
+        check_result = checkUnity(checkMap);
+        if(check_result == false)
+            return false;
+    }
 
-   // check cell
-   int count;
-   for(int i = 0; i < 7; i += 3){
-       for(int j = 0; j < 7; j += 3){
-           count = 0;
-           for(int k = 0; k < 3; k++){
-               for(int w = 0; w < 3; w++)
-                   checkMap[count++] = map2d[i+k][j+w];
-           }
+    // check cell
+    int count;
+    for(int i = 0; i < 7; i += 3) {
+        for(int j = 0; j < 7; j += 3) {
+            count = 0;
+            for(int k = 0; k < 3; k++) {
+                for(int w = 0; w < 3; w++)
+                    checkMap[count++] = map2d[i+k][j+w];
+            }
 
-           check_result = checkUnity(checkMap);
-           if(check_result == false)
-               return false;
-       }
-   }
+            check_result = checkUnity(checkMap);
+            if(check_result == false)
+                return false;
+        }
+    }
 
-   return true;
+    return true;
 }
 
-int Sudoku::solve(){
+int Sudoku::solve() {
     bool unchanged, result;
 
     // first check
@@ -265,9 +265,9 @@ int Sudoku::solve(){
 
     // count element
     total_element = 0;
-    for(int i = 0; i < 9; i++){
-        for(int j = 0; j < 9; j++){
-            if(map2d[i][j]){
+    for(int i = 0; i < 9; i++) {
+        for(int j = 0; j < 9; j++) {
+            if(map2d[i][j]) {
                 total_element++;
 
                 // update cand & total num of cand
@@ -289,18 +289,18 @@ int Sudoku::solve(){
     //test
     //int count = 0;
 
-    do{
+    do {
         unchanged = killCand();
         // check solution
-        for(int i = 0; i < 9; i++){
-            for(int j = 0; j < 9; j++){
+        for(int i = 0; i < 9; i++) {
+            for(int j = 0; j < 9; j++) {
                 // zero candidate: zero solution
-                if(total_cand[i][j] == 0){
+                if(total_cand[i][j] == 0) {
                     return 0;
                 }
 
                 // only one candidate in a space
-                if(map2d[i][j] == 0 && total_cand[i][j] == 1){
+                if(map2d[i][j] == 0 && total_cand[i][j] == 1) {
                     update(i, j);
 
                     if(total_element == sudokuSize)
@@ -326,7 +326,7 @@ int Sudoku::solve(){
     result = recursive_solve(0, 0);
 
     if(result == false) return 0;
-    else{
+    else {
         for(int i = 0; i < 9; i++)
             for(int j = 0; j < 9; j++)
                 map2d[i][j] = tempMap[i][j];
@@ -337,17 +337,17 @@ int Sudoku::solve(){
 }
 
 // delete candidates in each space
-bool Sudoku::killCand(){
+bool Sudoku::killCand() {
     bool unchanged = true;
 
     // delete candidates in cells & update unchanged
     if(delCellCand() == false)
         unchanged = false;
-        
+
     // delete candidates in columns & update unchanged
     if(delColCand() == false)
         unchanged = false;
-        
+
     // delete candidates in rows & update unchanged
     if(delRowCand() == false)
         unchanged = false;
@@ -355,11 +355,11 @@ bool Sudoku::killCand(){
     return unchanged;
 }
 
-bool Sudoku::delCand(int i, int j, int (&checkMap)[9]){
+bool Sudoku::delCand(int i, int j, int (&checkMap)[9]) {
     bool unchanged = true;
 
-    for(int k = 0; k < 9; k++){
-        if(checkMap[k] != 0 && cand[i][j][checkMap[k]-1] == 1){
+    for(int k = 0; k < 9; k++) {
+        if(checkMap[k] != 0 && cand[i][j][checkMap[k]-1] == 1) {
             unchanged = false;
             cand[i][j][checkMap[k]-1] = 0;
             total_cand[i][j]--;
@@ -368,14 +368,14 @@ bool Sudoku::delCand(int i, int j, int (&checkMap)[9]){
     return unchanged;
 }
 
-bool Sudoku::delRowCand(){
+bool Sudoku::delRowCand() {
     int checkMap[9];
     int unchanged = true;
 
     // delete candidates of spaces in rows
-    for(int i = 0; i < 9; i++){
-        for(int j = 0; j < 9; j++){
-            if(map2d[i][j] == 0){
+    for(int i = 0; i < 9; i++) {
+        for(int j = 0; j < 9; j++) {
+            if(map2d[i][j] == 0) {
                 for(int k = 0; k < 9; k++)
                     checkMap[k] = map2d[i][k];
 
@@ -388,14 +388,14 @@ bool Sudoku::delRowCand(){
     return unchanged;
 }
 
-bool Sudoku::delColCand(){
+bool Sudoku::delColCand() {
     int checkMap[9];
     int unchanged = true;
 
     // delete candidates of spaces in columns
-    for(int i = 0; i < 9; i++){
-        for(int j = 0; j < 9; j++){
-            if(map2d[i][j] == 0){
+    for(int i = 0; i < 9; i++) {
+        for(int j = 0; j < 9; j++) {
+            if(map2d[i][j] == 0) {
                 for(int k = 0; k < 9; k++)
                     checkMap[k] = map2d[k][j];
 
@@ -408,19 +408,21 @@ bool Sudoku::delColCand(){
     return unchanged;
 }
 
-bool Sudoku::delCellCand(){
+bool Sudoku::delCellCand() {
     int checkMap[9];
     int unchanged = true;
     int count, xi, yi;
 
     // delete candidates of spaces in cells
-    for(int i = 0; i < 9; i++){
-        for(int j = 0; j < 9; j++){
-            if(map2d[i][j] == 0){
+    for(int i = 0; i < 9; i++) {
+        for(int j = 0; j < 9; j++) {
+            if(map2d[i][j] == 0) {
                 // store a cell in checkMap
-                count = 0; xi = i/3*3; yi = j/3*3;
-                for(int x = xi; x < xi + 3; x++){
-                    for(int y = yi; y < yi + 3; y++){
+                count = 0;
+                xi = i/3*3;
+                yi = j/3*3;
+                for(int x = xi; x < xi + 3; x++) {
+                    for(int y = yi; y < yi + 3; y++) {
                         checkMap[count++] = map2d[x][y];
                     }
                 }
@@ -434,9 +436,9 @@ bool Sudoku::delCellCand(){
     return unchanged;
 }
 
-void Sudoku::update(int i, int j){
-    for(int k = 0; k < 9; k++){
-        if(cand[i][j][k]){
+void Sudoku::update(int i, int j) {
+    for(int k = 0; k < 9; k++) {
+        if(cand[i][j][k]) {
             map2d[i][j] = k + 1;
             total_element++;
             break;
@@ -444,23 +446,23 @@ void Sudoku::update(int i, int j){
     }
 }
 
-bool Sudoku::recursive_solve(int i, int j){
+bool Sudoku::recursive_solve(int i, int j) {
     // out of range
     if(i == 9) return true;
 
     // find next space
-    while(total_cand[i][j] == 1){
+    while(total_cand[i][j] == 1) {
         // end of a row
-        if(j == 8){
-            i++; j = 0;
+        if(j == 8) {
+            i++;
+            j = 0;
             if(i == 9) return true;
-        }
-        else
+        } else
             j++;
     }
 
-    for(int k = 0; k < 9; k++){
-        if(cand[i][j][k]){
+    for(int k = 0; k < 9; k++) {
+        if(cand[i][j][k]) {
             // test
             // cout << "map2d[" << i << "][" << j << "] = " << k+1 << endl;
 
@@ -471,12 +473,12 @@ bool Sudoku::recursive_solve(int i, int j){
             //showMap2d();
             //cout << endl;
 
-            if(isCorrect()){
+            if(isCorrect()) {
                 // test
                 //cout << "CORRECT" << endl;
 
                 // done: store results in tempMap
-                if(checkDone()){
+                if(checkDone()) {
                     // test
                     //cout << "DONE" << endl;
 
@@ -484,14 +486,11 @@ bool Sudoku::recursive_solve(int i, int j){
                         for(int y = 0; y < 9; y++)
                             tempMap[x][y] = map2d[x][y];
                     return true;
-                }
-                else if(j == 8){
+                } else if(j == 8) {
                     if(recursive_solve(i+1, 0))
                         return true;
-                }
-                else
-                    if(recursive_solve(i, j+1))
-                        return true;
+                } else if(recursive_solve(i, j+1))
+                    return true;
             }
         }
     }
@@ -503,7 +502,7 @@ bool Sudoku::recursive_solve(int i, int j){
     return false;
 }
 
-bool Sudoku::checkDone(){
+bool Sudoku::checkDone() {
     int count = 0;
 
     for(int i = 0; i < 9; i++)
