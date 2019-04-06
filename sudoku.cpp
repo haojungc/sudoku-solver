@@ -15,8 +15,12 @@ void Sudoku::setMap(const int set_map[]) {
 void Sudoku::setMap2d(const int set_map[]){
 
     for(int i = 0; i < 9; i++)
-        for(int j = 0; j < 9; j++)
+        for(int j = 0; j < 9; j++){
             map2d[i][j] = set_map[i*9 + j];
+            total_cand[i][j] = 9;
+            for(int k = 0; k < 9; k++)
+                cand[i][j][k] = 1;
+        }
 }
 
 // show map
@@ -26,6 +30,16 @@ void Sudoku::showMap() {
             cout << map[i] << endl;
         else
             cout << map[i] << " ";
+    }
+}
+
+void Sudoku::showMap2d(){
+    for(int i = 0; i < 9; i++){
+        for(int j = 0; j < 9; j++){
+            cout << map2d[i][j];
+            if(j < 8) cout << " ";
+        }
+        cout << endl;
     }
 }
 
@@ -193,11 +207,13 @@ bool Sudoku::checkUnity(const int (&checkMap)[9]){
         if(count[i] == 2)
             return false;
     }
+
     return true;
 }
 
 bool Sudoku::isCorrect(){
-   bool check_result;
+    int checkMap[9];
+    bool check_result;
 
    // check row
    for(int i = 0; i < 9; i++){
@@ -240,18 +256,232 @@ bool Sudoku::isCorrect(){
    return true;
 }
 
-int Sudoku::solve() {
-    int total_element = 0;
-    
+int Sudoku::solve(){
+    bool unchanged, result;
+
+    // first check
     if(isCorrect() == false)
         return 0;
 
+    // count element
+    total_element = 0;
     for(int i = 0; i < 9; i++){
         for(int j = 0; j < 9; j++){
-            if(map2d[i][j])
+            if(map2d[i][j]){
                 total_element++;
+
+                // update cand & total num of cand
+                total_cand[i][j] = 1;
+                for(int k = 0; k < 9; k++)
+                    cand[i][j][k] = 0;
+                cand[i][j][map2d[i][j]-1] = 1;
+            }
         }
     }
 
-    cout << "test suceeded" << endl;
+    // multiple solutions
+    if(total_element < 17)
+        return 2;
+
+    /*solve*/
+    // delete candidates
+    do{
+        unchanged = true;
+ 
+        // delete candidates in cells & update unchanged
+        if(delCellCand() == false)
+            unchanged = false;
+        
+        // delete candidates in columns & update unchanged
+        if(delColCand() == false)
+            unchanged = false;
+        
+        // delete candidates in rows & update unchanged
+        if(delRowCand() == false)
+            unchanged = false;
+
+        // check solution
+        for(int i = 0; i < 9; i++){
+            for(int j = 0; j < 9; j++){
+                // zero candidate: zero solution
+                if(total_cand[i][j] == 0){
+                    return 0;
+                }
+
+                // only one candidate in a space
+                if(map2d[i][j] == 0 && total_cand[i][j] == 1){
+                    update(i, j);
+
+                    if(total_element == sudokuSize)
+                        return 1;
+                }
+            }
+        }
+    } while(unchanged == false);
+
+    // store map2d
+    for(int i = 0; i < 9; i++)
+        for(int j = 0; j < 9; j++)
+            tempMap[i][j] = map2d[i][j];
+
+    result = recursive_solve(0, 0);
+
+    if(result == false) return 0;
+    else{
+        for(int i = 0; i < 9; i++)
+            for(int j = 0; j < 9; j++)
+                map2d[i][j] = tempMap[i][j];
+
+        return 1;
+        //recursive_solve_reverse(map2d, 0, 0);
+    }
 }
+
+
+// delete candidates in each space
+bool Sudoku::delCand(int i, int j, int (&checkMap)[9]){
+    bool unchanged = true;
+
+    for(int k = 0; k < 9; k++){
+        if(checkMap[k] != 0 && cand[i][j][checkMap[k]-1] == 1){
+            unchanged = false;
+            cand[i][j][checkMap[k]-1] = 0;
+            total_cand[i][j]--;
+        }
+    }
+    return unchanged;
+}
+
+bool Sudoku::delRowCand(){
+    int checkMap[9];
+    int unchanged = true;
+
+    // delete candidates of spaces in rows
+    for(int i = 0; i < 9; i++){
+        for(int j = 0; j < 9; j++){
+            if(map2d[i][j] == 0){
+                for(int k = 0; k < 9; k++)
+                    checkMap[k] = map2d[i][k];
+
+                // delete candidates & update unchanged
+                if(delCand(i, j, checkMap) == false)
+                    unchanged = false;
+            }
+        }
+    }
+    return unchanged;
+}
+
+bool Sudoku::delColCand(){
+    int checkMap[9];
+    int unchanged = true;
+
+    // delete candidates of spaces in columns
+    for(int i = 0; i < 9; i++){
+        for(int j = 0; j < 9; j++){
+            if(map2d[i][j] == 0){
+                for(int k = 0; k < 9; k++)
+                    checkMap[k] = map2d[k][j];
+
+                // delete candidates & update unchanged
+                if(delCand(i, j, checkMap) == false)
+                    unchanged = false;
+            }
+        }
+    }
+    return unchanged;
+}
+
+bool Sudoku::delCellCand(){
+    int checkMap[9];
+    int unchanged = true;
+    int count, xi, yi;
+
+    // delete candidates of spaces in cells
+    for(int i = 0; i < 9; i++){
+        for(int j = 0; j < 9; j++){
+            if(map2d[i][j] == 0){
+                // store a cell in checkMap
+                count = 0; xi = i/3*3; yi = j/3*3;
+                for(int x = xi; x < xi + 3; x++){
+                    for(int y = yi; y < yi + 3; y++){
+                        checkMap[count++] = map2d[x][y];
+                    }
+                }
+
+                // delete candidates & update unchanged
+                if(delCand(i, j, checkMap) == false)
+                    unchanged = false;
+            }
+        }
+    }
+    return unchanged;
+}
+
+void Sudoku::update(int i, int j){
+    for(int k = 0; k < 9; k++){
+        if(cand[i][j][k]){
+            map2d[i][j] = k + 1;
+            total_element++;
+            break;
+        }
+    }
+}
+
+bool Sudoku::recursive_solve(int i, int j){
+    // out of range
+    if(i == 9) return true;
+
+    // find next space
+    while(total_cand[i][j] == 1){
+        // end of a row
+        if(j == 8){
+            i++; j = 0;
+            if(i == 9) return true;
+        }
+        else
+            j++;
+    }
+
+    for(int k = 0; k < 9; k++){
+        if(cand[i][j][k]){
+            // put in candidates
+            map2d[i][j] = cand[i][j][k];
+
+            if(isCorrect()){
+                // done: store results in tempMap
+                if(checkDone()){
+                    for(int x = 0; x < 9; x++)
+                        for(int y = 0; y < 9; y++)
+                            tempMap[x][y] = map2d[x][y];
+                    return true;
+                }
+                else if(j == 8){
+                    if(recursive_solve(i+1, 0))
+                        return true;
+                }
+                else
+                    if(recursive_solve(i, j+1))
+                        return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+bool Sudoku::checkDone(){
+    int count = 0;
+
+    for(int i = 0; i < 9; i++)
+        for(int j = 0; j < 9; j++)
+            if(map2d[i][j])
+                count++;
+
+    if(count == sudokuSize)
+        return true;
+    else
+        return false;
+}
+
+
