@@ -22,4 +22,4 @@ sudoku.o: sudoku.cpp sudoku.h
 	g++ -c sudoku.cpp
 
 clean:
-	rm *.o
+	rm *.o generate transform solve
